@@ -2,7 +2,6 @@ executors:
   default:
     docker:
       - image: circleci/node:8
-        environment:
     working_directory: ~/repo
 
 version: 2.1
