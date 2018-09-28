@@ -58,11 +58,13 @@ jobs:
           key: v1-node-{{ checksum "package.json" }}-{{ arch }}
       - run:
           name: Run jest
-          command: yarn test --ci --reporters=default --reporters=jest-junit
+          command: yarn test --coverage --ci --reporters=default --reporters=jest-junit
           environment:
             JEST_JUNIT_OUTPUT: "test_results/jest.xml"
       - store_test_results:
           path: test_results
+      - store_artifacts:
+          path: coverage
 
 workflows:
   version: 2
