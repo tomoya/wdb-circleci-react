@@ -36,7 +36,7 @@ jobs:
           paths:
             - node_modules
 
-  test_lint:
+  test_eslint:
     executor: default
     steps:
       - restore_cache:
@@ -44,7 +44,7 @@ jobs:
       - restore_cache:
           key: v1-node-{{ checksum "package.json" }}-{{ arch }}
       - run:
-          name: Run eslint
+          name: Run ESLint
           command: yarn lint --format junit -o test_results/eslint.xml
       - store_test_results:
           path: test_results
@@ -57,7 +57,7 @@ jobs:
       - restore_cache:
           key: v1-node-{{ checksum "package.json" }}-{{ arch }}
       - run:
-          name: Run jest
+          name: Run Jest
           command: yarn test --coverage --ci --reporters=default --reporters=jest-junit
           environment:
             JEST_JUNIT_OUTPUT: "test_results/jest.xml"
@@ -74,7 +74,7 @@ workflows:
       - node_dependencies:
           requires:
             - checkout_code
-      - test_lint:
+      - test_eslint:
           requires:
             - node_dependencies
       - test_jest:
