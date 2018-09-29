@@ -95,7 +95,7 @@ jobs:
           command: sudo pip install awscli
       - deploy:
           name: S3へデプロイ
-          command: aws s3 sync build s3://wdb-circleci-react.forcode.jp/ --delete
+          command: aws s3 sync build s3://${S3_BUCKET}/ --delete
 
 workflows:
   version: 2
@@ -111,10 +111,9 @@ workflows:
       - test_jest: # node_dependenciesの後に実行
           requires:
             - node_dependencies
-      - build: # すべてのテストの後に実行
+      - build: # node_dependenciesの後に実行
           requires:
-            - test_eslint
-            - test_jest
+            - node_dependencies
       - deploy_s3: # buildの後に実行
           requires:
             - build
