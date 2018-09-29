@@ -3,6 +3,10 @@ executors:
     docker:
       - image: circleci/node:8
     working_directory: ~/repo
+  deploy:
+    docker:
+      - image: circleci/python
+    working_directory: ~/repo
 
 version: 2.1
 jobs:
@@ -66,6 +70,33 @@ jobs:
       - store_artifacts: # カバレッジレポートを保存
           path: coverage
 
+  build:
+    executor: default
+    steps:
+      - restore_cache: # ソースコードを復元
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache: # node_modulesを復元
+          key: v1-node-{{ checksum "package.json" }}-{{ arch }}
+      - run:
+          name: ビルドを実行
+          command: yarn build
+      - save_cache:
+          key: v1-build-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/repo/build
+
+  deploy_s3:
+    executor: deploy
+    steps:
+      - restore_cache:
+          key: v1-build-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: AWS CLIのインストール
+          command: sudo pip install awscli
+      - deploy:
+          name: S3へデプロイ
+          command: aws s3 sync build s3://wdb-circleci-react.forcode.jp/ --delete
+
 workflows:
   version: 2
   build_test_deploy:
@@ -80,3 +111,10 @@ workflows:
       - test_jest: # node_dependenciesの後に実行
           requires:
             - node_dependencies
+      - build: # すべてのテストの後に実行
+          requires:
+            - test_eslint
+            - test_jest
+      - deploy_s3: # buildの後に実行
+          requires:
+            - build
