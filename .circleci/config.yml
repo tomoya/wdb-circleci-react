@@ -1,16 +1,16 @@
 executors:
-  default:
+  default: # デフォルトのDockerイメージ
     docker:
       - image: circleci/node:8
     working_directory: ~/repo
 
 version: 2.1
 jobs:
-  checkout_code:
+  checkout_code: # ソースコードを取得
     executor: default
     steps:
       - checkout
-      - save_cache:
+      - save_cache: # ソースコードをキャッシュ。キーはリポジトリの最終コミットのハッシュ
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/repo
@@ -18,20 +18,20 @@ jobs:
   node_dependencies:
     executor: default
     steps:
-      - restore_cache:
+      - restore_cache: # ソースコードを復元
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
+      - restore_cache: # Yarnキャッシュを復元
           key: v1-yarn-{{ checksum "yarn.lock" }}-{{ arch }}
-      - restore_cache:
+      - restore_cache: # node_modulesを復元
           key: v1-node-{{ checksum "package.json" }}-{{ arch }}
       - run:
           name: Yarn Install
           command: yarn install
-      - save_cache:
+      - save_cache: # Yarnキャッシュをキャッシュ
           key: v1-yarn-{{ checksum "yarn.lock" }}-{{ arch }}
           paths:
             - ~/.cache/yarn
-      - save_cache:
+      - save_cache: # node_modulesをキャッシュ
           key: v1-node-{{ checksum "package.json" }}-{{ arch }}
           paths:
             - node_modules
@@ -39,31 +39,31 @@ jobs:
   test_eslint:
     executor: default
     steps:
-      - restore_cache:
+      - restore_cache: # ソースコードを復元
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
+      - restore_cache: # node_modulesを復元
           key: v1-node-{{ checksum "package.json" }}-{{ arch }}
       - run:
-          name: Run ESLint
+          name: ESLintを実行
           command: yarn lint --format junit -o test_results/eslint.xml
-      - store_test_results:
+      - store_test_results: # テストレポートを保存
           path: test_results
 
   test_jest:
     executor: default
     steps:
-      - restore_cache:
+      - restore_cache: # ソースコードを復元
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
+      - restore_cache: # node_modulesを復元
           key: v1-node-{{ checksum "package.json" }}-{{ arch }}
       - run:
-          name: Run Jest
+          name: Jestを実行
           command: yarn test --coverage --ci --reporters=default --reporters=jest-junit
-          environment:
+          environment: # テストレポートの出力先を環境変数で指定
             JEST_JUNIT_OUTPUT: "test_results/jest.xml"
-      - store_test_results:
+      - store_test_results: # テストレポートを保存
           path: test_results
-      - store_artifacts:
+      - store_artifacts: # カバレッジレポートを保存
           path: coverage
 
 workflows:
@@ -71,12 +71,12 @@ workflows:
   build_test_deploy:
     jobs:
       - checkout_code
-      - node_dependencies:
+      - node_dependencies: # checkout_codeの後に実行
           requires:
             - checkout_code
-      - test_eslint:
+      - test_eslint: # node_dependenciesの後に実行
           requires:
             - node_dependencies
-      - test_jest:
+      - test_jest: # node_dependenciesの後に実行
           requires:
             - node_dependencies
