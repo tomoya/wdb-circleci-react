@@ -45,9 +45,7 @@ jobs:
           key: v1-node-{{ checksum "package.json" }}-{{ arch }}
       - run:
           name: ESLintを実行
-          command: yarn lint --format junit -o test_results/eslint.xml
-      - store_test_results: # テストレポートを保存
-          path: test_results
+          command: yarn lint
 
   test_jest:
     executor: default
