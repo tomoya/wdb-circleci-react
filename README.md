@@ -6,6 +6,12 @@
 
 このリポジトでは、第4章『ビルド』以降登場するReactアプリケーションとその設定コードを公開しています。
 
+masterリポジトリは第5章『テスト』までの設定が含まれています。
+
+[deploy-s3](https://github.com/wdb-circleci/wdb-circleci-react/tree/deploy-s3)ブランチでは、第6章『デプロイ』の『AWS CLIによるS3へのReactアプリケーションのデプロイ』の内容が含まれた設定になっています。
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
