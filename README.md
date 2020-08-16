@@ -10,6 +10,8 @@ masterリポジトリは第5章『テスト』までの設定が含まれてい�
 
 [deploy-s3](https://github.com/wdb-circleci/wdb-circleci-react/tree/deploy-s3)ブランチでは、第6章『デプロイ』の『AWS CLIによるS3へのReactアプリケーションのデプロイ』の内容が含まれた設定になっています。
 
+テスト
+
 ---
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
@@ -1731,7 +1733,7 @@ Use the following [`launch.json`](https://code.visualstudio.com/docs/editor/debu
       "name": "Debug CRA Tests",
       "type": "node",
       "request": "launch",
-      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",      
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",
       "args": [
         "test",
         "--runInBand",
